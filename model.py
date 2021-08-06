@@ -4,7 +4,7 @@ import random
 
 
 class Uporabnik:
-    def __init__(self, uporabnisko_ime, zasifrirano_geslo, dan=None, kalorije=None):
+    def __init__(self, uporabnisko_ime, zasifrirano_geslo, dan, kalorije=None):
         self.uporabnisko_ime = uporabnisko_ime
         self.zasifrirano_geslo = zasifrirano_geslo
         self.dan = dan
@@ -26,7 +26,7 @@ class Uporabnik:
             raise ValueError("Uporabniško ime že obstaja")
         else:
             zasifrirano_geslo = Uporabnik._zasifriraj_geslo(geslo_v_cistopisu)
-            uporabnik = Uporabnik(uporabnisko_ime, zasifrirano_geslo)
+            uporabnik = Uporabnik(uporabnisko_ime, zasifrirano_geslo, Dan())
             uporabnik.v_datoteko()
             return uporabnik
 
@@ -40,12 +40,11 @@ class Uporabnik:
 
 
     def v_slovar(self):
-        pretvorjen_dan = {} if self.dan else self.dan.v_slovar()
         pretvorjene_kalorije = {} if self.kalorije else self.kalorije.v_slovar()
         return {
             "uporabnisko_ime": self.uporabnisko_ime,
             "zasifrirano_geslo": self.zasifrirano_geslo,
-            "dan": pretvorjen_dan,
+            "dan": self.dan.v_slovar(),
             "kalorije": pretvorjene_kalorije
         }
 
@@ -80,7 +79,15 @@ class Uporabnik:
         except FileNotFoundError:
             return None
 
-    
+    def dodaj_kalorije(self, teza, visina, starost, spol, aktivnost):
+        self.kalorije = Kalorije(teza, visina, starost, spol, aktivnost)
+
+    def dodaj_dan(self):
+        izracun = self.kalorije.izracun_kalorij()
+        self.dan.dodaj_izracun_v_dan(izracun)
+
+    def izbrisi_dneve(self):
+        self.dan.pobrisi_vse_dneve()
 
 
 
