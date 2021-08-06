@@ -40,7 +40,10 @@ class Uporabnik:
 
 
     def v_slovar(self):
-        pretvorjene_kalorije = {} if self.kalorije else self.kalorije.v_slovar()
+        if self.kalorije is None:
+            pretvorjene_kalorije = {}
+        else:
+            pretvorjene_kalorije = self.kalorije.v_slovar()
         return {
             "uporabnisko_ime": self.uporabnisko_ime,
             "zasifrirano_geslo": self.zasifrirano_geslo,
@@ -67,7 +70,10 @@ class Uporabnik:
         uporabnisko_ime = slovar["uporabnisko_ime"]
         zasifrirano_geslo = slovar["zasifrirano_geslo"]
         dan = Dan.iz_slovarja(slovar["dan"])
-        kalorije = Kalorije.iz_slovarja(slovar["kalorije"])
+        if slovar["kalorije"] == {}:
+            kalorije = None
+        else:
+            kalorije = Kalorije.iz_slovarja(slovar["kalorije"])
         return Uporabnik(uporabnisko_ime, zasifrirano_geslo, dan, kalorije)
 
     @staticmethod
@@ -100,10 +106,10 @@ class Kalorije:
         self.aktivnost = aktivnost
 
     def izracun_bmr(self):
-        if self.spol == "ženski":
+        if self.spol == "zenski":
             izracun = 10 * self.teza + 6.25 * self.visina - 5 * self.starost - 161
         
-        elif self.spol == "moški":
+        elif self.spol == "moski":
             izracun = 10 * self.teza + 6.25 * self.visina - 5 * self.starost + 5
         
         return izracun
@@ -173,17 +179,13 @@ class Dan:
         self.dnevi.clear()
     
     def v_slovar(self):
-        i = 0
-        slovar = {}
-        for posamezen_dan in self.dnevi:
-            slovar[i] = posamezen_dan
-            i += 1
+        slovar = {"krneki": self.dnevi}
         return slovar
 
     @classmethod
-    def iz_slovarja(cls, seznam):
+    def iz_slovarja(cls, slovar):
         dan = Dan()
-        dan.dnevi = [seznam[i] for i in range(len(seznam))]
+        dan.dnevi = slovar["krneki"]
         return dan
 
 #    def shrani_v_datoteko(self):

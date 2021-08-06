@@ -86,11 +86,11 @@ def prikaz_dnevnika():
 @bottle.post("/dodaj_dan/")
 def dodajmo_nov_dan():
     uporabnik = trenutni_uporabnik()
-    teza = bottle.request.forms["teza"]
-    spol = bottle.request.forms["spol"]
-    starost = bottle.request.forms["starost"]
-    visina = bottle.request.forms["visina"]
-    aktivnost = bottle.request.forms["aktivnost"]
+    teza = float(bottle.request.forms["teza"])
+    spol = (bottle.request.forms["spol"])
+    starost = float(bottle.request.forms["starost"])
+    visina = float(bottle.request.forms["visina"])
+    aktivnost = float(bottle.request.forms["aktivnost"])
     uporabnik.dodaj_kalorije(teza, visina, starost, spol, aktivnost)
     uporabnik.dodaj_dan()
     shrani_stanje(uporabnik)
@@ -102,4 +102,6 @@ def izbrisimo_dneve():
     uporabnik.izbrisi_dneve()
     shrani_stanje(uporabnik)
     bottle.redirect("/")
+
+bottle.run(debug=True, reloader=True)
 
